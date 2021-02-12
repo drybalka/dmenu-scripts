@@ -1,0 +1,11 @@
+#!/bin/bash 
+. ~/.config/dmenu/config
+
+request=( $(echo "" \
+	| DMENU -i -p "file pathname contains (regexp permitted):" ) )
+	
+locate --regex "${request}" \
+	| DMENU -p "select file to copy path to clipboard" -i -l 20 \
+	| sed '/^\//!{s/^/\//}' \
+	| tr -d "\n" \
+	| xclip -selection c && notify-send "path copied to clipboard"

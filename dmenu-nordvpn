@@ -1,0 +1,22 @@
+#!/bin/bash
+. ~/.config/dmenu/config
+
+cmd=$( echo -e "connect\ndisconnect\nUkraine\nUSA\nGermany\nGreat Britain" | DMENU)
+# Use this in the case of manual openvpn connection
+# connect() {
+# 	sudo -A nordvpn connect $@
+# }
+# Use this for nordvpn-bin
+connect() {
+	nordvpn connect $@
+}
+case $cmd in
+    connect) connect;;
+	# disconnect) sudo -A nordvpn disconnect;;
+	disconnect) nordvpn disconnect;;
+	Ukraine) connect ua;;
+	USA) connect us;;
+	Germany) connect de;;
+    Great\ Britain) connect gb;;
+	*) ;;
+esac

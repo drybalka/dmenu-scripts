@@ -1,0 +1,4 @@
+#! /bin/bash
+. .config/dmenu/config
+
+DMENU -p 'Please enter your password.' -nf "$DMENU_bg" -nb "$DMENU_bg" <&- && echo

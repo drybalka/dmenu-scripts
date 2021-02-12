@@ -1,0 +1,33 @@
+#!/bin/bash
+. .config/dmenu/config
+
+CACHE="$HOME/.cache/dmenu/recent"
+if [ ! -f $CACHE ]; then
+	touch $CACHE
+fi
+
+if [ -s $CACHE ]; then
+	app=$(echo -e "$(cut -d' ' -f2 $CACHE)\nnew" | DMENU)
+else
+	app=$(echo "new" | DMENU)
+fi
+
+if [[ "$app" == "new" ]]; then
+	OLDIFS=$IFS
+	IFS=:
+	app=$(echo "$(stest -fx -l $PATH)" | DMENU)
+	IFS=$OLDIFS
+fi
+if [[ -n "$app" ]]; then
+	num=$(( $(grep " $app$" $CACHE | cut -d' ' -f1) + 1))
+	line=$(awk -v num="$num" '$1 > num' $CACHE | tail -n1) # last more frequent line
+	res=$(sed "/ $app$/d" $CACHE)
+	if [[ -n "$line" ]]; then
+		res=$(sed "s/$line/$line\n$num $app/g" <<< "$res")
+	else
+		res=$(sed "1s/^/$num $app\n/" <<<"$res")
+	fi
+	echo -e "$res" > $CACHE
+fi
+#echo $app
+dmenu-exec $app

@@ -1,0 +1,11 @@
+#!/bin/bash
+. ~/.config/dmenu/config
+
+cmd=$( echo -e "reboot\nlogout\nlock\npoweroff" | DMENU)
+case $cmd in
+	lock) xset s activate;;
+	logout) i3-msg exit;;
+	reboot) reboot;;
+	poweroff) poweroff;;
+	*)
+esac
