@@ -1,33 +1,56 @@
 #!/bin/bash
-. .config/dmenu/config
+# This script returns dmenu with recent and most used programms
+# and allows to run them
 
-CACHE="$HOME/.cache/dmenu/recent"
-if [ ! -f $CACHE ]; then
-	touch $CACHE
+DMENU_CONFIG="$HOME/.config/dmenu/config"
+DMENU_CACHE="$HOME/.cache/dmenu-recent"
+DMENU_CUSTOMCOMMANDS="$HOME/.config/dmenu/customcommands"
+
+# Load config
+if [[ -f "$DMENU_CONFIG" ]]; then 
+    source "$DMENU_CONFIG"
+else
+    DMENU() { dmenu "$@"; }
 fi
 
-if [ -s $CACHE ]; then
-	app=$(echo -e "$(cut -d' ' -f2 $CACHE)\nnew" | DMENU)
+# Create cache file if it is missing
+if [[ ! -f "$DMENU_CACHE" ]]; then
+	touch "$DMENU_CACHE"
+fi
+
+# Print recently used apps from cache and save responce to 'app'
+if [[ -s "$DMENU_CACHE" ]]; then
+	app=$(echo -e "$(cut -d' ' -f2 "$DMENU_CACHE")\nnew" | DMENU)
 else
 	app=$(echo "new" | DMENU)
 fi
 
+# If app is new print all apps and let to choose from them
 if [[ "$app" == "new" ]]; then
 	OLDIFS=$IFS
 	IFS=:
 	app=$(echo "$(stest -fx -l $PATH)" | DMENU)
 	IFS=$OLDIFS
 fi
+
+# Update cache with the chosen app
 if [[ -n "$app" ]]; then
-	num=$(( $(grep " $app$" $CACHE | cut -d' ' -f1) + 1))
-	line=$(awk -v num="$num" '$1 > num' $CACHE | tail -n1) # last more frequent line
-	res=$(sed "/ $app$/d" $CACHE)
+	num=$(( $(grep " $app$" "$DMENU_CACHE" | cut -d' ' -f1) + 1))
+	line=$(awk -v num="$num" '$1 > num' "$DMENU_CACHE" | tail -n1) # last more frequent line
+	res=$(sed "/ $app$/d" "$DMENU_CACHE")
 	if [[ -n "$line" ]]; then
 		res=$(sed "s/$line/$line\n$num $app/g" <<< "$res")
 	else
 		res=$(sed "1s/^/$num $app\n/" <<<"$res")
 	fi
-	echo -e "$res" > $CACHE
+	echo -e "$res" > "$DMENU_CACHE"
 fi
-#echo $app
-dmenu-exec $app
+
+# Run app with the custom command if it exists
+line=$(grep "^$app:.*$" "$DMENU_CUSTOMCOMMANDS")
+line=${line#"$app:"}
+if [[ -n "$line" ]]; then
+	eval "$line"
+else
+	eval "$app"
+fi

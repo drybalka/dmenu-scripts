@@ -1,0 +1,14 @@
+# A sample configuration file for the dmenu scripts
+# Put this file in $DMENU_CONFIG, by default ~/.config/dmenu/config
+
+DMENU_bg=$(xrdb -query | grep "*color0" | cut -f 2)
+DMENU_fg=$(xrdb -query | grep "*color7" | cut -f 2)
+DMENU_sl=$(xrdb -query | grep "*color4" | cut -f 2)
+DMENU_fn="Source Code Pro 21"
+
+DMENU() {
+	dmenu -i -fn "$DMENU_fn" -nb "$DMENU_bg" -nf "$DMENU_fg" -sb "$DMENU_sl" "$@"
+}
+
+
+# vim:ft=sh

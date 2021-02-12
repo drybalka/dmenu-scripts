@@ -1,6 +1,16 @@
 #!/bin/bash 
-. ~/.config/dmenu/config
+# This script returns results of 'locate' command in a convenient dmenu form
 
+DMENU_CONFIG="$HOME/.config/dmenu/config"
+
+# Load config
+if [[ -f "$DMENU_CONFIG" ]]; then 
+    source "$DMENU_CONFIG"
+else
+    DMENU() { dmenu "$@"; }
+fi
+
+# Request name and print results
 request=( $(echo "" \
 	| DMENU -i -p "file pathname contains (regexp permitted):" ) )
 	

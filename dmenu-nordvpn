@@ -1,19 +1,28 @@
 #!/bin/bash
-. ~/.config/dmenu/config
+# This script manages nordvpn connection through dmenu
 
-cmd=$( echo -e "connect\ndisconnect\nUkraine\nUSA\nGermany\nGreat Britain" | DMENU)
-# Use this in the case of manual openvpn connection
-# connect() {
-# 	sudo -A nordvpn connect $@
-# }
+DMENU_CONFIG="$HOME/.config/dmenu/config"
+
+# Load config
+if [[ -f "$DMENU_CONFIG" ]]; then 
+    source "$DMENU_CONFIG"
+else
+    DMENU() { dmenu "$@"; }
+fi
+
+# # Use this in the case of manual openvpn connection
+# connect() { sudo -A nordvpn connect "$@"; }
+# connect() { sudo -A nordvpn disconnect; }
+
 # Use this for nordvpn-bin
-connect() {
-	nordvpn connect $@
-}
+connect() { nordvpn connect "$@"; }
+disconnect() { nordvpn disconnect; }
+
+# Print choices and perform nordvpn command
+cmd=$( echo -e "connect\ndisconnect\nUkraine\nUSA\nGermany\nGreat Britain" | DMENU)
 case $cmd in
     connect) connect;;
-	# disconnect) sudo -A nordvpn disconnect;;
-	disconnect) nordvpn disconnect;;
+	disconnect) disconnect;;
 	Ukraine) connect ua;;
 	USA) connect us;;
 	Germany) connect de;;

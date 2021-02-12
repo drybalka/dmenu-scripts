@@ -1,6 +1,16 @@
 #!/bin/bash
-. ~/.config/dmenu/config
+# This script calls dmenu session manager
 
+DMENU_CONFIG="$HOME/.config/dmenu/config"
+
+# Load config
+if [[ -f "$DMENU_CONFIG" ]]; then 
+    source "$DMENU_CONFIG"
+else
+    DMENU() { dmenu "$@"; }
+fi
+
+# Print dmenu options and execute command
 cmd=$( echo -e "reboot\nlogout\nlock\npoweroff" | DMENU)
 case $cmd in
 	lock) xset s activate;;

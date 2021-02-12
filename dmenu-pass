@@ -1,4 +1,18 @@
 #! /bin/bash
-. .config/dmenu/config
+# This script allows superuser authorization through dmenu
+# For this to work SUDO_ASKPASS varible should be set to "dmenu-pass" or to the
+# path to this script explicitly. This variable can be exported on startup in
+# .bashrc or similar files.
+# To call this script sudo command must be called with '-A' flag
 
-DMENU -p 'Please enter your password.' -nf "$DMENU_bg" -nb "$DMENU_bg" <&- && echo
+DMENU_CONFIG="$HOME/.config/dmenu/config"
+
+# Load config
+if [[ -f "$DMENU_CONFIG" ]]; then 
+    source "$DMENU_CONFIG"
+else
+    DMENU() { dmenu "$@"; }
+fi
+
+# Use the same color for back- and foreground to conceal the password
+DMENU -p 'Please enter your superuser password.' -nf "$DMENU_bg" -nb "$DMENU_bg" <&- && echo

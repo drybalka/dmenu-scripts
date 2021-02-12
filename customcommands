@@ -1,0 +1,6 @@
+# List of programs to run with custom command
+# Put this file in $DMENU_CUSTOMCOMMANDS, by default ~/.config/dmenu/customcommands
+
+htop:urxvt -e htop &
+powertop:sudo -A urxvt -e powertop &
+ranger:urxvt -e ranger &
