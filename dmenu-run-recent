@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script returns dmenu with recent and most used programms
-# and allows to run them
+# and allows to run them using a custom command from $DMENU_CUSTOMCOMMANDS
 
 DMENU_CONFIG="$HOME/.config/dmenu/config"
 DMENU_CACHE="$HOME/.cache/dmenu-recent"
